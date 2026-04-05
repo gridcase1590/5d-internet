@@ -117,7 +117,3 @@ python3 software/eigenvalue_detect.py --freq 4.77e9 --duration 1800
 ([@v3rdad](https://t.me/v3rdad)) — Theory, experimental design, hardware
 
 With analytical contributions by **Claude (Opus)**, Anthropic
-
-## License
-
-MIT. Build it. Test it. If it works, tell everyone.
