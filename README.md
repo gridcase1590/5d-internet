@@ -1,6 +1,6 @@
 # 5d-internet
 
-**An experiment to detect a fifth dimension using a copper pipe and a $200 radio.**
+**An experiment to detect a fifth dimension using a copper pipe and a $200 radio and route packets trought it.**
 
 ![Status](https://img.shields.io/badge/status-experimental-orange)
 ![Cost](https://img.shields.io/badge/cost-€350%2Fnode-green)
