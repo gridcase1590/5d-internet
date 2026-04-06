@@ -1,0 +1,247 @@
+<?xml version='1.0' encoding='utf-8'?>
+<?grc format='1' created='3.10.9.2'?>
+<flow_graph>
+  <timestamp>2025-01-01T00:00:00</timestamp>
+  <block>
+    <key>options</key>
+    <param>
+      <key>id</key>
+      <value>kk_5dcomm</value>
+    </param>
+    <param>
+      <key>title</key>
+      <value>KK-5DCOMM Receiver</value>
+    </param>
+    <param>
+      <key>author</key>
+      <value>David Lowder / v3rdad</value>
+    </param>
+    <param>
+      <key>description</key>
+      <value>Kaluza-Klein bulk mode detector. Tunes to f1=4.77 GHz, captures IQ, feeds eigenvalue analysis.</value>
+    </param>
+    <param>
+      <key>generate_options</key>
+      <value>qt_gui</value>
+    </param>
+    <param>
+      <key>run</key>
+      <value>True</value>
+    </param>
+  </block>
+
+  <!-- ═══ VARIABLES ═══ -->
+  <block>
+    <key>variable</key>
+    <param><key>id</key><value>samp_rate</value></param>
+    <param><key>value</key><value>2000000</value></param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param><key>id</key><value>center_freq</value></param>
+    <param><key>value</key><value>4770000000</value></param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param><key>id</key><value>rf_gain</value></param>
+    <param><key>value</key><value>40</value></param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param><key>id</key><value>if_gain</value></param>
+    <param><key>value</key><value>32</value></param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param><key>id</key><value>bb_gain</value></param>
+    <param><key>value</key><value>30</value></param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param><key>id</key><value>fft_size</value></param>
+    <param><key>value</key><value>1024</value></param>
+  </block>
+
+  <!-- ═══ GUI CONTROLS ═══ -->
+  <block>
+    <key>variable_qtgui_range</key>
+    <param><key>id</key><value>freq_slider</value></param>
+    <param><key>label</key><value>Centre Frequency (Hz)</value></param>
+    <param><key>value</key><value>4770000000</value></param>
+    <param><key>start</key><value>4500000000</value></param>
+    <param><key>stop</key><value>5000000000</value></param>
+    <param><key>step</key><value>500000</value></param>
+  </block>
+  <block>
+    <key>variable_qtgui_range</key>
+    <param><key>id</key><value>gain_slider</value></param>
+    <param><key>label</key><value>RF Gain (dB)</value></param>
+    <param><key>value</key><value>40</value></param>
+    <param><key>start</key><value>0</value></param>
+    <param><key>stop</key><value>62</value></param>
+    <param><key>step</key><value>2</value></param>
+  </block>
+
+  <!-- ═══ SOURCE: HACKRF ═══ -->
+  <block>
+    <key>osmosdr_source</key>
+    <param><key>id</key><value>hackrf_source</value></param>
+    <param><key>type</key><value>fc32</value></param>
+    <param><key>args</key><value>hackrf=0</value></param>
+    <param><key>sample_rate</key><value>samp_rate</value></param>
+    <param><key>freq</key><value>freq_slider</value></param>
+    <param><key>gain</key><value>gain_slider</value></param>
+    <param><key>if_gain</key><value>if_gain</value></param>
+    <param><key>bb_gain</key><value>bb_gain</value></param>
+    <param><key>bandwidth</key><value>samp_rate</value></param>
+  </block>
+
+  <!-- ═══ SPECTRUM DISPLAY ═══ -->
+  <block>
+    <key>qtgui_freq_sink_x</key>
+    <param><key>id</key><value>spectrum_display</value></param>
+    <param><key>name</key><value>KK Spectrum</value></param>
+    <param><key>type</key><value>complex</value></param>
+    <param><key>fftsize</key><value>fft_size</value></param>
+    <param><key>freqhalf</key><value>True</value></param>
+    <param><key>center_freq</key><value>freq_slider</value></param>
+    <param><key>bandwidth</key><value>samp_rate</value></param>
+    <param><key>wintype</key><value>5</value></param>
+    <param><key>average</key><value>0.1</value></param>
+    <param><key>ymin</key><value>-100</value></param>
+    <param><key>ymax</key><value>-20</value></param>
+    <param><key>update_time</key><value>0.10</value></param>
+  </block>
+
+  <!-- ═══ WATERFALL DISPLAY ═══ -->
+  <block>
+    <key>qtgui_waterfall_sink_x</key>
+    <param><key>id</key><value>waterfall_display</value></param>
+    <param><key>name</key><value>KK Waterfall</value></param>
+    <param><key>type</key><value>complex</value></param>
+    <param><key>fftsize</key><value>fft_size</value></param>
+    <param><key>freqhalf</key><value>True</value></param>
+    <param><key>center_freq</key><value>freq_slider</value></param>
+    <param><key>bandwidth</key><value>samp_rate</value></param>
+    <param><key>intensity_min</key><value>-100</value></param>
+    <param><key>intensity_max</key><value>-20</value></param>
+    <param><key>update_time</key><value>0.10</value></param>
+  </block>
+
+  <!-- ═══ TIME SINK ═══ -->
+  <block>
+    <key>qtgui_time_sink_x</key>
+    <param><key>id</key><value>time_display</value></param>
+    <param><key>name</key><value>IQ Time Domain</value></param>
+    <param><key>type</key><value>complex</value></param>
+    <param><key>size</key><value>1024</value></param>
+    <param><key>samp_rate</key><value>samp_rate</value></param>
+    <param><key>ymin</key><value>-1</value></param>
+    <param><key>ymax</key><value>1</value></param>
+    <param><key>update_time</key><value>0.10</value></param>
+  </block>
+
+  <!-- ═══ FILE SINK (raw IQ recording) ═══ -->
+  <block>
+    <key>blocks_file_sink</key>
+    <param><key>id</key><value>iq_recorder</value></param>
+    <param><key>type</key><value>complex</value></param>
+    <param><key>file</key><value>/tmp/kk_iq_capture.raw</value></param>
+    <param><key>unbuffered</key><value>False</value></param>
+    <param><key>append</key><value>False</value></param>
+  </block>
+
+  <!-- ═══ BAND-PASS FILTER (isolate KK band) ═══ -->
+  <block>
+    <key>band_pass_filter</key>
+    <param><key>id</key><value>kk_bandpass</value></param>
+    <param><key>type</key><value>fir_filter_ccf</value></param>
+    <param><key>decim</key><value>1</value></param>
+    <param><key>gain</key><value>1</value></param>
+    <param><key>samp_rate</key><value>samp_rate</value></param>
+    <param><key>low_cutoff_freq</key><value>-200000</value></param>
+    <param><key>high_cutoff_freq</key><value>200000</value></param>
+    <param><key>transition_width</key><value>50000</value></param>
+    <param><key>wintype</key><value>5</value></param>
+  </block>
+
+  <!-- ═══ POWER PROBE (for eigenvalue feeder) ═══ -->
+  <block>
+    <key>blocks_complex_to_mag_squared</key>
+    <param><key>id</key><value>power_calc</value></param>
+  </block>
+  <block>
+    <key>blocks_moving_average_xx</key>
+    <param><key>id</key><value>power_avg</value></param>
+    <param><key>type</key><value>float</value></param>
+    <param><key>length</key><value>1024</value></param>
+    <param><key>scale</key><value>0.0009765625</value></param>
+  </block>
+
+  <!-- ═══ UDP SINK (feed eigenvalue_detect.py) ═══ -->
+  <block>
+    <key>blocks_udp_sink</key>
+    <param><key>id</key><value>eigenvalue_feed</value></param>
+    <param><key>type</key><value>complex</value></param>
+    <param><key>ipaddr</key><value>127.0.0.1</value></param>
+    <param><key>port</key><value>5555</value></param>
+    <param><key>psize</key><value>1472</value></param>
+    <param><key>eof</key><value>True</value></param>
+  </block>
+
+  <!-- ═══ CONNECTIONS ═══ -->
+  <!-- HackRF → Spectrum -->
+  <connection>
+    <source_block_id>hackrf_source</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>spectrum_display</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <!-- HackRF → Waterfall -->
+  <connection>
+    <source_block_id>hackrf_source</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>waterfall_display</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <!-- HackRF → Bandpass → Time display -->
+  <connection>
+    <source_block_id>hackrf_source</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>kk_bandpass</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>kk_bandpass</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>time_display</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <!-- Bandpass → UDP (eigenvalue feeder) -->
+  <connection>
+    <source_block_id>kk_bandpass</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>eigenvalue_feed</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <!-- Bandpass → File recorder -->
+  <connection>
+    <source_block_id>kk_bandpass</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>iq_recorder</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <!-- Bandpass → Power calculation -->
+  <connection>
+    <source_block_id>kk_bandpass</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>power_calc</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>power_calc</source_block_id>
+    <source_key>0</source_key>
+    <sink_block_id>power_avg</sink_block_id>
+    <sink_key>0</sink_key>
+  </connection>
+</flow_graph>
